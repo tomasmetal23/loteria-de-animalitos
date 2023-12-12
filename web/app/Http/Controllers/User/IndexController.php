@@ -249,9 +249,10 @@ class IndexController extends Controller
                     $animal->limit = floatval($animal->sort->daily_limit);
                 } else {
                     // Si no ha salido esta semana, se asigna el limite configurado para estos casos
+                    // Modificar a futuro, limite de capital que se puede jugar por animal establecido en 50 de forma manual
                     $animal->limit = ($weekLimit = floatval($animal->sort->week_limit)) ?
                         $weekLimit :
-                        0;
+                        50;
                 }
             }
 
