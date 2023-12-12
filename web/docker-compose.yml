@@ -1,0 +1,45 @@
+version: '3'
+services:
+
+  web:
+    build:
+      context: ""
+      dockerfile: Dockerfile.local
+      args:
+        hostUID: 1000
+        hostGID: 1000
+    image: laravel5-web
+    hostname: laravel5-web
+    container_name: laravel5-web
+    extra_hosts:
+      # Need for Xdebug and some callback to local
+      - "host.docker.internal:host-gateway"
+    external_links:
+      - mysql:mysql
+    labels:
+      - "SERVICE_NAME=laravel5-web"
+      - "SERVICE_80_NAME=laravel5-web"
+      - "SERVICE_443_NAME=laravel5-web"
+      - "traefik.enable=true"
+      - "traefik.http.routers.laravel5-web.entrypoints=websecure"
+      - "traefik.http.routers.laravel5-web.rule=Host(`loteria.saiyans.com.ve`)"
+      - "traefik.http.routers.laravel5-web.tls.certresolver=lets-encr"
+    ports:
+     - '80'
+     - '443'
+    environment:
+      APP_ENV: local
+      PHP_IDE_CONFIG: serverName=laravel5-web.service.docker
+    volumes:
+    - ../:/home/www/app
+    # Override xdebug.ini of image `vinhxike/php5`
+    - ./customize/etc/php5/conf.d/xdebug.ini:/etc/php5/conf.d/xdebug.ini
+  
+  redis:
+    image: redis:4.0.14-alpine3.11
+    hostname: laravel5-redis
+    container_name: laravel5-redis
+    labels:
+      SERVICE_NAME: laravel5-redis
+
+ 

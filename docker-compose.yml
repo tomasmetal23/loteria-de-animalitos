@@ -1,0 +1,36 @@
+version: "3"
+
+networks:
+  web:
+    external: true
+  database:
+    external: true
+
+services:
+  loteria:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    volumes:
+      - ./web/:/var/www/html
+      - ./000-default.conf:/etc/apache2/sites-enabled/000-default.conf
+   # environment:
+    # JOOMLA_DB_PASSWORD: 
+    # JOOMLA_DB_HOST: 
+    # JOOMLA_DB_USER: 
+    # JOOMLA_DB_NAME:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.loteria.entrypoints=websecure"
+      - "traefik.http.routers.loteria.rule=Host(`loteria.saiyans.com.ve`)"
+      - "traefik.http.routers.loteria.tls.certresolver=lets-encr"
+    networks:
+      - database
+      - web
+    external_links:
+      - mysql:mysql
+#volumes:
+#  joomla-market:
+
+#obsoleto
+#Crear volumen con su respectivo nombre para la persistencia de datos # docker volume create blog
